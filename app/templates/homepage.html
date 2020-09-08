@@ -1,71 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-        crossorigin="anonymous"></script>
-    <title>Controlled Chaos</title>
-</head>
+{% include 'navbar.html' %}
 
-<body>
-    {% include 'navbar.html' %}
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            {% for i in breadcrumbs[:-1] %}
-            <li class="breadcrumb-item"><a href="#">{{i}}</a></li>
-            {% endfor %}
-            <li class="breadcrumb-item active" aria-current="page">{{breadcrumbs[-1]}}</li>
-        </ol>
-    </nav>
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for i in breadcrumbs[:-1] %}
+        <li class="breadcrumb-item"><a href="#">{{i}}</a></li>
+        {% endfor %}
+        <li class="breadcrumb-item active" aria-current="page">{{breadcrumbs[-1]}}</li>
+    </ol>
+</nav>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">Name</th>
-                <th scope="col">Date modified</th>
-                <th scope="col">Size</th>
-                <th scope="col">Kind</th>
-                <th scope="col">Options</th>
-            </tr>
-        </thead>
-        <tbody>
-            {%for i in range(nfiles)%}
-            <tr>
-                <th scope="row">files[i]</th>
-                <td>
-                    {{ files[i] }}
-                </td>
-                <td>{{ files[i] }}</td>
-                <td>{{ files[i] }}</td>
-                <td>{{ files[i] }}</td>
-                <td>
-                    <div class="row">
-                        <div class="col">
-                            <form action={{ url_for('open_file') }} method="POST">
-                                <button type="submit" class="btn btn-primary" id="filepath" name="filepath"
-                                    value={{ files[i] }}>
-                                    Open
-                                </button>
-                            </form>
-                        </div>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Name</th>
+            <th scope="col">Last modified on</th>
+            <th scope="col">Size (MB)</th>
+            <th scope="col">Kind</th>
+            <th scope="col">Options</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for i in range(nfiles)%}
+        <tr>
+            <th scope="row"><img
+                    src={{ '../static/img/{}.svg'.format((icon[files[i]['extension']] or icon['no-icon'])) }} alt=""
+                    width="20em" height="20em"></th>
+            {% if files[i]['extension'] == 'folder' %}
+            <td>{{ files[i]['name'] }}</td>
+            {% else %}
+            <td>{{ files[i]['name'] }}</td>
+            {% endif %}
+            <td>{{ files[i]['last_modified_on'] }}</td>
+            <td>{{ files[i]['size_mb'] }}</td>
+            {% if files[i]['extension'] == 'folder' %}
+            <td>{{ files[i]['extension']|capitalize }}</td>
+            {% else %}
+            <td>{{ files[i]['extension'] }}</td>
+            {% endif %}
+            <td>
+                <div class="row">
+                    <div class="col">
+                        <form action={{ url_for('open_file') }} method="POST">
+                            <button type="submit" class="btn btn-primary" id="filepath" name="filepath"
+                                value={{ '{}{}'.format(files[i]['parent_folder'], files[i]['name']) }}>
+                                Open
+                            </button>
+                        </form>
                     </div>
-                </td>
-            </tr>
-            {%endfor%}
-        </tbody>
-    </table>
-</body>
-
-</html>
+                </div>
+            </td>
+        </tr>
+        {%endfor%}
+    </tbody>
+</table>
+{% endblock %}
