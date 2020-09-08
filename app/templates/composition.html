@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% include 'navbar.html' %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for i in breadcrumbs[:-1] %}
+        <li class="breadcrumb-item"><a href="#">{{i}}</a></li>
+        {% endfor %}
+        <li class="breadcrumb-item active" aria-current="page">{{breadcrumbs[-1]}}</li>
+    </ol>
+</nav>
+
+<ul class="list-group">
+    {% for k, files in blind_categories.items() %}
+    <div data-toggle="collapse" href="{{ '#collapseFileTable' + k }}" role="button" aria-expanded="false"
+        aria-controls="{{ 'collapseFileTable' + k }}">
+        <li class="list-group-item">{{ form_names[k] }} ({{ files|length }})</li>
+        <div class="collapse" id="{{ 'collapseFileTable' + k }}">
+            <div class="card card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Last modified on</th>
+                            <th scope="col">Size (MB)</th>
+                            <th scope="col">Kind</th>
+                            <th scope="col">Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in range(files|length) %}
+                        <tr>
+                            <th scope="row"><img
+                                    src={{ '../static/img/{}.svg'.format((icon[files[i]['extension']] or icon['no-icon'])) }}
+                                    alt="" width="20em" height="20em"></th>
+                            {% if files[i]['extension'] == 'folder' %}
+                            <td>{{ files[i]['name'] }}</td>
+                            {% else %}
+                            <td>{{ files[i]['name'] }}</td>
+                            {% endif %}
+                            <td>{{ files[i]['last_modified_on'] }}</td>
+                            <td>{{ files[i]['size_mb'] }}</td>
+                            {% if files[i]['extension'] == 'folder' %}
+                            <td>{{ files[i]['extension']|capitalize }}</td>
+                            {% else %}
+                            <td>{{ files[i]['extension'] }}</td>
+                            {% endif %}
+                            <td>
+                                <div class="row">
+                                    <div class="col">
+                                        <form action={{ url_for('open_file') }} method="POST">
+                                            <button type="submit" class="btn btn-primary" id="filepath" name="filepath"
+                                                value={{ '{}{}'.format(files[i]['parent_folder'], files[i]['name']) }}>
+                                                Open
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+
+{% endblock %}
