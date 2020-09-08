@@ -20,8 +20,15 @@
 
 <body>
     {% include 'navbar.html' %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            {% for i in breadcrumbs[:-1] %}
+            <li class="breadcrumb-item"><a href="#">{{i}}</a></li>
+            {% endfor %}
+            <li class="breadcrumb-item active" aria-current="page">{{breadcrumbs[-1]}}</li>
+        </ol>
+    </nav>
 
-    <h1>Homepage for {{ name|capitalize }}</h1>
     <table class="table">
         <thead>
             <tr>
@@ -34,23 +41,21 @@
             </tr>
         </thead>
         <tbody>
-            {%for i in range(rows_len)%}
+            {%for i in range(nfiles)%}
             <tr>
-                <th scope="row"><img
-                        src={{ '../static/img/{}.svg'.format((icon[rows[i]['extension']] or icon['no-icon'])) }} alt=""
-                        width="20em" height="20em"></th>
+                <th scope="row">files[i]</th>
                 <td>
-                    {{ rows[i]['file'] }}
+                    {{ files[i] }}
                 </td>
-                <td>{{ rows[i]['last_modified'] }}</td>
-                <td>{{ rows[i]['size'] }}</td>
-                <td>{{ rows[i]['extension'] }}</td>
+                <td>{{ files[i] }}</td>
+                <td>{{ files[i] }}</td>
+                <td>{{ files[i] }}</td>
                 <td>
                     <div class="row">
                         <div class="col">
                             <form action={{ url_for('open_file') }} method="POST">
                                 <button type="submit" class="btn btn-primary" id="filepath" name="filepath"
-                                    value={{ rows[i]['absolute_path'] }}>
+                                    value={{ files[i] }}>
                                     Open
                                 </button>
                             </form>
