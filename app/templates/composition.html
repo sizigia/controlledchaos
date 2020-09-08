@@ -17,6 +17,7 @@
     <div data-toggle="collapse" href="{{ '#collapseFileTable' + k }}" role="button" aria-expanded="false"
         aria-controls="{{ 'collapseFileTable' + k }}">
         <li class="list-group-item">{{ form_names[k] }} ({{ files|length }})</li>
+        {% if files|length > 0 %}
         <div class="collapse" id="{{ 'collapseFileTable' + k }}">
             <div class="card card-body">
                 <table class="table">
@@ -66,6 +67,7 @@
                 </table>
             </div>
         </div>
+        {%endif%}
     </div>
     {% endfor %}
 </ul>
