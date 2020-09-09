@@ -21,7 +21,7 @@
             <th scope="row"><img
                     src={{ '../static/img/{}.svg'.format((icon[files[i]['extension']] or icon['no-icon'])) }} alt=""
                     width="20em" height="20em"></th>
-            <td>{{ files[i]['folder'] }}</td>
+            <td>{{ files[i]['parent_folder'] }}</td>
             {% if files[i]['extension'] == 'folder' %}
             <td>{{ files[i]['name'] }}</td>
             {% else %}
