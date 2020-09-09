@@ -11,53 +11,39 @@
         <li class="breadcrumb-item active" aria-current="page">{{breadcrumbs[-1]}}</li>
     </ol>
 </nav>
-<form action={{ url_for('index_folders') }} method="POST">
-    <div class="form-row">
-        <div class="form-group col-md-2">Name
+<div class="container">
+    <form action={{ url_for('index_folders') }} method="POST">
+        <div class="form-row">
+            <div class="form-group col-md-2">Name
+            </div>
+            <div class="form-group col-md-3">
+                Last modified on
+            </div>
+            <div class="form-group col-md-3">
+                Size (MB)
+            </div>
+            <div class="form-group col-md-1"><button type="submit" class="btn btn-primary mb-2">Index</button>
+            </div>
         </div>
-        <div class="form-group col-md-3">
-            Last modified on
-        </div>
-        <div class="form-group col-md-3">
-            Size (MB)
-        </div>
-        <div class="form-group col-md-2">
-            Files in folder
-        </div>
-        <div class="form-group col-md-1"><button type="submit" class="btn btn-primary mb-2">Index</button>
-        </div>
-        <div class="form-group col-md-1">Options
-        </div>
-    </div>
-    {%for i in range(nfiles)%}
-    <div class="form-row">
-        <div class="form-group col-md-2">
-            <img src={{ '../static/img/{}.svg'.format((icon[files[i]['extension']] or icon['no-icon'])) }} alt=""
-                width="20em" height="20em">
-            <a href="{{ '{}{}'.format(files[i]['parent_folder'], files[i]['name']) }}">{{ files[i]['name'] }}</a>
-        </div>
-        <div class="form-group col-md-3">
-            {{ files[i]['last_modified_on'] }}
-        </div>
-        <div class="form-group col-md-3">
-            {{ files[i]['size_mb'] }}
-        </div>
-        <div class="form-group col-md-2">
-            {{ files[i]['nfiles'] }}
-        </div>
-        <div class="form-group col-md-1">
-            <input class="form-check-input" type="checkbox" id="folder" name="folder"
-                value="{{ '{}{}'.format(files[i]['parent_folder'], files[i]['name']) }}">
-        </div>
-        <div class="form-group col-md-1">
-            <form action={{ url_for('open_file') }} method="POST">
-                <button type="checkbox" class="btn btn-primary" id="filepath" name="filepath"
+        {%for i in range(nfiles)%}
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <img src={{ '../static/img/{}.svg'.format((icon[files[i]['extension']] or icon['no-icon'])) }} alt=""
+                    width="20em" height="20em">
+                <a href="{{ '{}{}'.format(files[i]['parent_folder'], files[i]['name']) }}">{{ files[i]['name'] }}</a>
+            </div>
+            <div class="form-group col-md-3">
+                {{ files[i]['last_modified_on'] }}
+            </div>
+            <div class="form-group col-md-3">
+                {{ files[i]['size_mb'] }}
+            </div>
+            <div class="form-group col-md-1">
+                <input class="form-check-input" type="checkbox" id="folder" name="folder"
                     value={{ '{}{}'.format(files[i]['parent_folder'], files[i]['name']) }}>
-                    Open
-                </button>
-            </form>
+            </div>
         </div>
-    </div>
-    {%endfor%}
-</form>
+        {%endfor%}
+    </form>
+</div>
 {% endblock %}
