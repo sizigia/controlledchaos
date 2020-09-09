@@ -1,66 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-        crossorigin="anonymous"></script>
-    <title>Controlled Chaos</title>
-</head>
+{% include 'navbar.html' %}
 
-<body>
-    {% include 'navbar.html' %}
-
-    <h1>Homepage for {{ name|capitalize }}</h1>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">Name</th>
-                <th scope="col">Date modified</th>
-                <th scope="col">Size</th>
-                <th scope="col">Kind</th>
-                <th scope="col">Options</th>
-            </tr>
-        </thead>
-        <tbody>
-            {%for i in range(rows_len)%}
-            <tr>
-                <th scope="row"><img
-                        src={{ '../static/img/{}.svg'.format((icon[rows[i]['extension']] or icon['no-icon'])) }} alt=""
-                        width="20em" height="20em"></th>
-                <td>
-                    {{ rows[i]['file'] }}
-                </td>
-                <td>{{ rows[i]['last_modified'] }}</td>
-                <td>{{ rows[i]['size'] }}</td>
-                <td>{{ rows[i]['extension'] }}</td>
-                <td>
-                    <div class="row">
-                        <div class="col">
-                            <form action={{ url_for('open_file') }} method="POST">
-                                <button type="submit" class="btn btn-primary" id="filepath" name="filepath"
-                                    value={{ rows[i]['absolute_path'] }}>
-                                    Open
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            {%endfor%}
-        </tbody>
-    </table>
-</body>
-
-</html>
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for i in breadcrumbs[:-1] %}
+        <li class="breadcrumb-item"><a href="#">{{i}}</a></li>
+        {% endfor %}
+        <li class="breadcrumb-item active" aria-current="page">{{breadcrumbs[-1]}}</li>
+    </ol>
+</nav>
+<form action={{ url_for('index_folders') }} method="POST">
+    <div class="form-row">
+        <div class="form-group col-md-2">Name
+        </div>
+        <div class="form-group col-md-3">
+            Last modified on
+        </div>
+        <div class="form-group col-md-3">
+            Size (MB)
+        </div>
+        <div class="form-group col-md-2">
+            Files in folder
+        </div>
+        <div class="form-group col-md-1"><button type="submit" class="btn btn-primary mb-2">Index</button>
+        </div>
+        <div class="form-group col-md-1">Options
+        </div>
+    </div>
+    {%for i in range(nfiles)%}
+    <div class="form-row">
+        <div class="form-group col-md-2">
+            <img src={{ '../static/img/{}.svg'.format((icon[files[i]['extension']] or icon['no-icon'])) }} alt=""
+                width="20em" height="20em">
+            <a href="{{ '{}{}'.format(files[i]['parent_folder'], files[i]['name']) }}">{{ files[i]['name'] }}</a>
+        </div>
+        <div class="form-group col-md-3">
+            {{ files[i]['last_modified_on'] }}
+        </div>
+        <div class="form-group col-md-3">
+            {{ files[i]['size_mb'] }}
+        </div>
+        <div class="form-group col-md-2">
+            {{ files[i]['nfiles'] }}
+        </div>
+        <div class="form-group col-md-1">
+            <input class="form-check-input" type="checkbox" id="folder" name="folder"
+                value="{{ '{}{}'.format(files[i]['parent_folder'], files[i]['name']) }}">
+        </div>
+        <div class="form-group col-md-1">
+            <form action={{ url_for('open_file') }} method="POST">
+                <button type="checkbox" class="btn btn-primary" id="filepath" name="filepath"
+                    value={{ '{}{}'.format(files[i]['parent_folder'], files[i]['name']) }}>
+                    Open
+                </button>
+            </form>
+        </div>
+    </div>
+    {%endfor%}
+</form>
+{% endblock %}

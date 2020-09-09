@@ -3,19 +3,11 @@
 {% include 'navbar.html' %}
 
 {% block content %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        {% for i in breadcrumbs[:-1] %}
-        <li class="breadcrumb-item"><a href="#">{{i}}</a></li>
-        {% endfor %}
-        <li class="breadcrumb-item active" aria-current="page">{{breadcrumbs[-1]}}</li>
-    </ol>
-</nav>
-
 <table class="table">
     <thead>
         <tr>
             <th scope="col"></th>
+            <th scope="col">Parent folder</th>
             <th scope="col">Name</th>
             <th scope="col">Last modified on</th>
             <th scope="col">Size (MB)</th>
@@ -24,11 +16,12 @@
         </tr>
     </thead>
     <tbody>
-        {%for i in range(nfiles)%}
+        {%for i in range(files|length)%}
         <tr>
             <th scope="row"><img
                     src={{ '../static/img/{}.svg'.format((icon[files[i]['extension']] or icon['no-icon'])) }} alt=""
                     width="20em" height="20em"></th>
+            <td>{{ files[i]['folder'] }}</td>
             {% if files[i]['extension'] == 'folder' %}
             <td>{{ files[i]['name'] }}</td>
             {% else %}

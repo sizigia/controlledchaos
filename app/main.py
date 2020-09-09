@@ -5,7 +5,7 @@ from datetime import datetime
 from helpers import get_attributes, blind_categories
 
 import pandas as pd
-from flask import Flask, flash, render_template, request, url_for
+from flask import Flask, flash, render_template, request, url_for, redirect, session
 
 app = Flask(__name__)
 
@@ -53,31 +53,44 @@ def open_file():
     filepath = request.form.get('filepath')
     os.popen(f"open {filepath}")
 
-    # return render_template('index.html', rows_len=len(test), rows=test, icon=icon)
     return '', 204
 
 
-@ app.route('/<name>')
-def index(name, rows=test):
-    name = name.capitalize()
+@ app.route('/', methods=['POST'])
+def index_folders():
+    print(request.form.getlist('folder'))
+    folders = request.form.getlist('folder')
 
-    return render_template('index.html', name=name, rows_len=len(test), rows=test, icon=icon)
+    return redirect(url_for('homepage', folders=folders))
 
 
-@ app.route('/current_folder')
-def homepage():
-    # METIS/BOOTCAMPWORK/Project5/controlledchaos/data/t5/
-    current_folder = '/Users/faustina/'
-    breadcrumbs = current_folder[1:].split('/')
-    files = [get_attributes(file, current_folder)
-             for file in os.listdir(current_folder) if file != '.DS_Store']
+@ app.route('/')
+def index():
+    home_folder = '/Users/faustina/'
+    breadcrumbs = home_folder[1:].split('/')
+    files = [get_attributes(file, home_folder)
+             for file in os.listdir(home_folder) if os.path.isdir(home_folder + file)]
     no_files = len(files)
 
-    return render_template('homepage.html', current_folder=current_folder, breadcrumbs=breadcrumbs, nfiles=no_files, files=files, icon=icon)
+    return render_template('index.html', current_folder=home_folder, breadcrumbs=breadcrumbs, nfiles=no_files, files=files, icon=icon)
+
+
+@ app.route('/home')
+def homepage(folders=['/Users/faustina/']):
+    # METIS/BOOTCAMPWORK/Project5/controlledchaos/data/t5/
+    all_files = []
+
+    for folder in folders:
+        breadcrumbs = folder[1:].split('/')
+        all_files.extend([get_attributes(file, folder)
+                          for file in os.listdir(folder) if file != '.DS_Store'])
+
+    return render_template('homepage.html', breadcrumbs=breadcrumbs, files=all_files, icon=icon)
 
 
 @app.route('/composition')
 def composition():
+    # METIS/BOOTCAMPWORK/Project5/controlledchaos/data/t5/'
     current_folder = '/Users/faustina/METIS/BOOTCAMPWORK/Project5/controlledchaos/data/t5/'
     breadcrumbs = current_folder[1:].split('/')
     blind_cats = blind_categories(formats, os.listdir(current_folder))
@@ -85,6 +98,12 @@ def composition():
                   for item in sorted(blind_cats, key=lambda i: len(blind_cats[i]), reverse=True)}
 
     return render_template('composition.html', breadcrumbs=breadcrumbs, icon=icon, form_names=form_names, blind_categories=blind_cats)
+
+
+@app.route('/indexer')
+def indexer():
+
+    return render_template('indexer.html')
 
 # @ app.route('/browser')
 # def index2():
