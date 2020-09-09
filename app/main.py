@@ -43,7 +43,7 @@ formats = {
     'system': ['.bak', '.cab', '.cfg', '.cpl', '.cur', '.dll', '.dmp', '.drv', '.icns', '.ico', '.ini', '.lnk', '.msi', '.sys', '.tmp']
 }
 
-form_names = {'audio_vid': 'Media', 'compressed': 'Compressed', 'disk_img': 'Disk images', 'data_dbs': 'Data and Databases', 'email': 'Email related files',
+form_names = {'folders': 'Folders', 'audio_vid': 'Media', 'compressed': 'Compressed', 'disk_img': 'Disk images', 'data_dbs': 'Data and Databases', 'email': 'Email related files',
               'executable': 'Programs', 'font': 'Fonts', 'image': 'Pictures', 'internet': 'Web related files', 'presentation': 'Slides', 'text': 'Text documents', 'system': 'Settings'}
 
 
@@ -59,19 +59,21 @@ def open_file():
     return '', 204
 
 
-@ app.route('/select-folders', methods=['GET', 'POST'])
+@ app.route('/select-folders', methods=['POST'])
 def index_folders():
     if request.method == 'POST':
-        if len(request.form.getlist('folder')) > 0:
-            session['curr_folder'] = request.form.getlist('folder')
+        session['curr_folder'] = request.form.getlist('folder')
 
     return '', 204
 
 
 @ app.route('/')
 def index():
-    home_folder = '/Users/faustina/'
-    session['curr_folder'] = [home_folder]
+    home_folder = '/Users/faustina/METIS/BOOTCAMPWORK'
+    if home_folder[-1] != '/':
+        home_folder += '/'
+    if ('curr_folder' not in session) or (not len(session['curr_folder'])):
+        session['curr_folder'] = [home_folder]
 
     breadcrumbs = home_folder[1:].split('/')
     session['file_attrs'] = [get_attributes(file, home_folder) for file in os.listdir(
