@@ -1,13 +1,16 @@
 import os
-import re
 import pickle
+import re
 from datetime import datetime
-from helpers import get_attributes, blind_categories
 
 import pandas as pd
-from flask import Flask, flash, render_template, request, url_for, redirect, session
+from flask import (Flask, flash, redirect, render_template, request, session,
+                   url_for)
+
+from helpers import blind_categories, get_attributes
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'mockupkey'
 
 
 icon = {
@@ -56,59 +59,58 @@ def open_file():
     return '', 204
 
 
-@ app.route('/', methods=['POST'])
+@ app.route('/select-folders', methods=['GET', 'POST'])
 def index_folders():
-    print(request.form.getlist('folder'))
-    folders = request.form.getlist('folder')
+    if request.method == 'POST':
+        if len(request.form.getlist('folder')) > 0:
+            session['curr_folder'] = request.form.getlist('folder')
 
-    return redirect(url_for('homepage', folders=folders))
+    return '', 204
 
 
 @ app.route('/')
 def index():
     home_folder = '/Users/faustina/'
-    breadcrumbs = home_folder[1:].split('/')
-    files = [get_attributes(file, home_folder)
-             for file in os.listdir(home_folder) if os.path.isdir(home_folder + file)]
-    no_files = len(files)
+    session['curr_folder'] = [home_folder]
 
-    return render_template('index.html', current_folder=home_folder, breadcrumbs=breadcrumbs, nfiles=no_files, files=files, icon=icon)
+    breadcrumbs = home_folder[1:].split('/')
+    session['file_attrs'] = [get_attributes(file, home_folder) for file in os.listdir(
+        home_folder) if os.path.isdir(home_folder + file)]
+
+    no_files = len(session['file_attrs'])
+
+    return render_template('index.html', current_folder=home_folder, breadcrumbs=breadcrumbs, nfiles=no_files, files=session['file_attrs'], icon=icon)
 
 
 @ app.route('/home')
-def homepage(folders=['/Users/faustina/']):
-    # METIS/BOOTCAMPWORK/Project5/controlledchaos/data/t5/
+def homepage():
+    folders = session['curr_folder']
     all_files = []
 
     for folder in folders:
-        breadcrumbs = folder[1:].split('/')
-        all_files.extend([get_attributes(file, folder)
-                          for file in os.listdir(folder) if file != '.DS_Store'])
+        files = os.listdir(folder)
+        all_files.extend([get_attributes(file, folder) for file in files])
 
-    return render_template('homepage.html', breadcrumbs=breadcrumbs, files=all_files, icon=icon)
+    session['file_attrs'] = all_files
+
+    return render_template('homepage.html', files=session['file_attrs'], icon=icon)
 
 
 @app.route('/composition')
 def composition():
-    # METIS/BOOTCAMPWORK/Project5/controlledchaos/data/t5/'
-    current_folder = '/Users/faustina/METIS/BOOTCAMPWORK/Project5/controlledchaos/data/t5/'
-    breadcrumbs = current_folder[1:].split('/')
-    blind_cats = blind_categories(formats, os.listdir(current_folder))
-    blind_cats = {item: [get_attributes(file, current_folder) for file in blind_cats[item]]
-                  for item in sorted(blind_cats, key=lambda i: len(blind_cats[i]), reverse=True)}
+    files_w_attributes = session['file_attrs']
 
-    return render_template('composition.html', breadcrumbs=breadcrumbs, icon=icon, form_names=form_names, blind_categories=blind_cats)
+    blind_cats = blind_categories(formats, files_w_attributes)
+    blind_cats = {item: blind_cats[item] for item in sorted(
+        blind_cats, key=lambda i: len(blind_cats[i]), reverse=True)}
+
+    return render_template('composition.html', icon=icon, form_names=form_names, blind_categories=blind_cats)
 
 
 @app.route('/indexer')
 def indexer():
 
     return render_template('indexer.html')
-
-# @ app.route('/browser')
-# def index2():
-#    user_agent = request.headers.get('User-Agent')
-#    return '<p>Your browser is %s</p>' % user_agent
 
 
 if __name__ == '__main__':
