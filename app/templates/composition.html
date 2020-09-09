@@ -8,8 +8,8 @@
     {% for k, files in blind_categories.items() %}
     <div data-toggle="collapse" href="{{ '#collapseFileTable' + k }}" role="button" aria-expanded="false"
         aria-controls="{{ 'collapseFileTable' + k }}">
-        <li class="list-group-item">{{ form_names[k] }} ({{ files|length }})</li>
         {% if files|length > 0 %}
+        <li class="list-group-item">{{ form_names[k] }} ({{ files|length }})</li>
         <div class="collapse" id="{{ 'collapseFileTable' + k }}">
             <div class="card card-body">
                 <table class="table">
@@ -59,6 +59,8 @@
                 </table>
             </div>
         </div>
+        {% elif file|length == 0%}
+        <li class="list-group-item disabled">{{ form_names[k] }} ({{ files|length }})</li>
         {%endif%}
     </div>
     {% endfor %}
