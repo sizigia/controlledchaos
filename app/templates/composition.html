@@ -3,14 +3,6 @@
 {% include 'navbar.html' %}
 
 {% block content %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        {% for i in breadcrumbs[:-1] %}
-        <li class="breadcrumb-item"><a href="#">{{i}}</a></li>
-        {% endfor %}
-        <li class="breadcrumb-item active" aria-current="page">{{breadcrumbs[-1]}}</li>
-    </ol>
-</nav>
 
 <ul class="list-group">
     {% for k, files in blind_categories.items() %}
@@ -54,7 +46,7 @@
                                     <div class="col">
                                         <form action={{ url_for('open_file') }} method="POST">
                                             <button type="submit" class="btn btn-primary" id="filepath" name="filepath"
-                                                value={{ '{}{}'.format(files[i]['parent_folder'], files[i]['name']) }}>
+                                                value={{ files[i]['absolute_path'] }}>
                                                 Open
                                             </button>
                                         </form>
