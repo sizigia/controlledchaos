@@ -12,7 +12,7 @@ def get_attributes(filepath, folder):
     attributes = {'parent_folder': folder,
                   'absolute_path': file,
                   'name': filepath,
-                  'size_mb': file_stats.st_size / 1e+6,
+                  'size_mb': file_stats.st_size,  # / 1e+6 #MB,
                   'created_on': datetime.fromtimestamp(file_stats.st_birthtime),
                   'last_modified_on': datetime.fromtimestamp(file_stats.st_mtime)}
 
@@ -33,5 +33,8 @@ def blind_categories(format_dict, files):
 
     for k, v in format_dict.items():
         blind_classifier[k] = [e for e in files if (e['extension'] in v)]
+
+    blind_classifier['folders'] = [
+        e for e in files if (e['extension'] == 'folder')]
 
     return blind_classifier
