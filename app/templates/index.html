@@ -14,20 +14,20 @@
 <div class="container">
     <form action={{ url_for('index_folders') }} method="POST">
         <div class="form-row">
-            <div class="form-group col-md-2">Name
+            <div class="form-group col-md-3">Name
             </div>
             <div class="form-group col-md-3">
                 Last modified on
             </div>
             <div class="form-group col-md-3">
-                Size (MB)
+                Size (Bytes)
             </div>
             <div class="form-group col-md-1"><button type="submit" class="btn btn-primary mb-2">Index</button>
             </div>
         </div>
-        {%for i in range(nfiles)%}
+        {%for i in range(nfolds)%}
         <div class="form-row">
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-3">
                 <img src={{ '../static/img/{}.svg'.format((icon[files[i]['extension']] or icon['no-icon'])) }} alt=""
                     width="20em" height="20em">
                 <a href="{{ '{}{}'.format(files[i]['parent_folder'], files[i]['name']) }}">{{ files[i]['name'] }}</a>
