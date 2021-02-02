@@ -9,9 +9,9 @@
             <th scope="col"></th>
             <th scope="col">Parent folder</th>
             <th scope="col">Name</th>
-            <th scope="col">Last modified on</th>
             <th scope="col">Size (MB)</th>
-            <th scope="col">Kind</th>
+            <th scope="col">Last modified on</th>
+            <th scope="col">File Type</th>
             <th scope="col">Options</th>
         </tr>
     </thead>
@@ -27,8 +27,8 @@
             {% else %}
             <td>{{ files[i]['name'] }}</td>
             {% endif %}
-            <td>{{ files[i]['last_modified_on'] }}</td>
             <td>{{ files[i]['size_mb'] }}</td>
+            <td>{{ files[i]['last_modified_on'] }}</td>
             {% if files[i]['extension'] == 'folder' %}
             <td>{{ files[i]['extension']|capitalize }}</td>
             {% else %}

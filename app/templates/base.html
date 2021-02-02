@@ -15,6 +15,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
+    <link href="/static/css/style.css" rel="stylesheet">
+    <style>
+        /* setting the text-align property to center*/
+        th,
+        td {
+            padding: 5px;
+            text-align: center;
+
+        }
+    </style>
     <title>Controlled Chaos</title>
 </head>
 
@@ -22,7 +32,11 @@
     {% block navbar %}{% endblock %}
 
     {% block content %}{% endblock %}
-</body>
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">© 2020 Faustina Maria Giaquinta Caggiati. </span>
+        </div>
+    </footer>
 </body>
 
 </html>

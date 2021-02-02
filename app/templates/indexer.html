@@ -5,48 +5,49 @@
 {% block content %}
 
 <ul class="list-group">
-    {% for files in [text_files] %}
-    <div data-toggle="collapse" href="{{ '#collapseFileTable' + 'topic' }}" role="button" aria-expanded="false"
-        aria-controls="{{ 'collapseFileTable' + 'topic' }}">
-        <li class="list-group-item">{{ 'Topic placeholder' or files[0]['topic']}} ({{ files|length }})</li>
-        {% if files|length > 0 %}
-        <div class="collapse" id="{{ 'collapseFileTable' + 'topic' }}">
+    {% for topic, files in topic_files.items() %}
+    <div data-toggle="collapse" href="{{ '#collapseFileTable_{}'.format(files['topic_n']) }}" role="button"
+        aria-expanded="false" aria-controls="{{ 'collapseFileTable_{}'.format(files['topic_n']) }}">
+        <li class="list-group-item"><strong>{{ 'Cluster ' + topic[-1] }}</strong> ({{ files['files']|length }} files)
+        </li>
+        {% if files['files']|length > 0 %}
+        <div class="collapse" id="{{ 'collapseFileTable_{}'.format(files['topic_n']) }}">
             <div class="card card-body">
                 <table class="table">
                     <thead>
                         <tr>
                             <th scope="col"></th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Last modified on</th>
+                            <th scope="col">Filename</th>
+                            <!--th scope="col">Last modified on</th-->
+                            <th scope="col">File Type</th>
                             <th scope="col">Size (MB)</th>
-                            <th scope="col">Kind</th>
-                            <th scope="col">Options</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for i in range(files|length) %}
+                        {% for i in range(files['files']|length) %}
                         <tr>
                             <th scope="row"><img
-                                    src={{ '../static/img/{}.svg'.format((icon[files[i]['extension']] or icon['no-icon'])) }}
+                                    src={{ '../static/img/{}.svg'.format((icon[files['files'][i]['extension']] or icon['no-icon'])) }}
                                     alt="" width="20em" height="20em"></th>
-                            {% if files[i]['extension'] == 'folder' %}
-                            <td>{{ files[i]['name'] }}</td>
+                            {% if files['files'][i]['extension'] == 'folder' %}
+                            <td>{{ files['files'][i]['name'] }}</td>
                             {% else %}
-                            <td>{{ files[i]['name'] }}</td>
+                            <td>{{ files['files'][i]['name'] }}</td>
                             {% endif %}
-                            <td>{{ files[i]['last_modified_on'] }}</td>
-                            <td>{{ files[i]['size_mb'] }}</td>
-                            {% if files[i]['extension'] == 'folder' %}
-                            <td>{{ files[i]['extension']|capitalize }}</td>
+                            <!--td>{{ files['files'][i]['last_modified_on'] }}</td-->
+                            {% if files['files'][i]['extension'] == 'folder' %}
+                            <td>{{ files['files'][i]['extension']|capitalize }}</td>
                             {% else %}
-                            <td>{{ files[i]['extension'] }}</td>
+                            <td>{{ files['files'][i]['extension'] }}</td>
                             {% endif %}
+                            <td>{{ "%.2f"|format(files['files'][i]['size_mb']) }}</td>
                             <td>
                                 <div class="row">
                                     <div class="col">
                                         <form action={{ url_for('open_file') }} method="POST">
                                             <button type="submit" class="btn btn-primary" id="filepath" name="filepath"
-                                                value={{ files[i]['absolute_path'] }}>
+                                                value={{ files['files'][i]['absolute_path'] }}>
                                                 Open
                                             </button>
                                         </form>
